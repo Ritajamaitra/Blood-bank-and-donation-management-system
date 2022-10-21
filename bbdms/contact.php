@@ -1,13 +1,39 @@
 <?php
+session_start();
 error_reporting(0);
 include('includes/config.php');
+if(isset($_POST['send']))
+  {
+$name=$_POST['fullname'];
+$email=$_POST['email'];
+$contactno=$_POST['contactno'];
+$message=$_POST['message'];
+$sql="INSERT INTO  tblcontactusquery(name,EmailId,ContactNumber,Message) VALUES(:name,:email,:contactno,:message)";
+$query = $dbh->prepare($sql);
+$query->bindParam(':name',$name,PDO::PARAM_STR);
+$query->bindParam(':email',$email,PDO::PARAM_STR);
+$query->bindParam(':contactno',$contactno,PDO::PARAM_STR);
+$query->bindParam(':message',$message,PDO::PARAM_STR);
+$query->execute();
+$lastInsertId = $dbh->lastInsertId();
+if($lastInsertId)
+{
+
+echo '<script>alert("Query Sent. We will contact you shortly.")</script>';
+}
+else 
+{
+echo "<script>alert('Something went wrong. Please try again.');</script>";  
+}
+
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="zxx">
 
 <head>
-	<title>Blood Bank Donar Management System | About Us </title>
+	<title>Blood Bank Donar Management System | Contact Us </title>
 	<!-- Meta tag Keywords -->
 	
 	<script>
@@ -56,44 +82,58 @@ include('includes/config.php');
 				<li class="breadcrumb-item">
 					<a href="index.php">Home</a>
 				</li>
-				<li class="breadcrumb-item active" aria-current="page">About Us</li>
+				<li class="breadcrumb-item active" aria-current="page">Contact Us</li>
 			</ol>
 		</div>
 	</div>
 	<!-- //page details -->
 
-	<!-- about -->
-	<section class="about py-5">
-		<div class="container py-xl-5 py-lg-3">
-			<?php 
-$pagetype="aboutus";
-$sql = "SELECT type,detail,PageName from tblpages where type=:pagetype";
-$query = $dbh -> prepare($sql);
-$query->bindParam(':pagetype',$pagetype,PDO::PARAM_STR);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
-$cnt=1;
-if($query->rowCount() > 0)
-{
-foreach($results as $result)
-{ ?>
-			<div class="w3ls-titles text-center mb-md-5 mb-4">
-				<h3 class="title"><?php   echo htmlentities($result->PageName); ?></h3>
+	<!-- contact -->
+	<div class="agileits-contact py-5">
+		<div class="py-xl-5 py-lg-3">
+			<div class="w3ls-titles text-center mb-5">
+				<h3 class="title">Contact Us</h3>
 				<span>
 					<i class="fas fa-user-md"></i>
 				</span>
+				<p class="mt-2">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
 			</div>
-			<p class="aboutpara text-center mx-auto"><?php  echo $result->detail; ?>.</p>
-<?php } } ?>
-			
-		</div>
-	</section>
-	<!-- //about -->
+			<div class="d-flex">
+				<div class="col-lg-5 w3_agileits-contact-left">
+				</div>
+				<div class="col-lg-7 contact-right-w3l">
+					<h5 class="title-w3 text-center mb-5">Get In Touch</h5>
+					<form action="#" method="post">
+						<div class="d-flex space-d-flex">
+							<div class="form-group grid-inputs">
+								 <input type="text" class="form-control" id="name" name="fullname" placeholder="Please enter your name.">
+							</div>
+							<div class="form-group grid-inputs">
+								<input type="tel" class="form-control" id="phone" name="contactno"  placeholder="Please enter your phone number.">
+							</div>
+						</div>
+						<div class="form-group">
+							<input type="email" class="form-control" id="email" name="email" required placeholder="Please enter your email address.">
+						</div>
+						
 
+						<div class="form-group">
+							<textarea rows="10" cols="100" class="form-control" id="message" name="message" placeholder="Please enter your message" maxlength="999" style="resize:none"></textarea>
+						</div>
+						<div class="form-group">
+							<input type="submit" value="Send Message" name="send">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- //contact -->
+
+	
 
 
 	<?php include('includes/footer.php');?>
-
 
 	<!-- Js files -->
 	<!-- JavaScript -->
